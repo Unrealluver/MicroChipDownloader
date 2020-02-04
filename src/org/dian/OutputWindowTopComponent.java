@@ -35,11 +35,11 @@ import org.openide.util.NbBundle.Messages;
     "CTL_TestOutputWindowTopComponent=程序烧录",
     "HINT_TestOutputWindowTopComponent=This is a TestOutputWindow window"
 })
-public final class TestOutputWindowTopComponent extends TopComponent {
+public final class OutputWindowTopComponent extends TopComponent {
     
-    private static TestOutputWindowTopComponent testOutputWindowTopComponent;
+    private static OutputWindowTopComponent testOutputWindowTopComponent;
 
-    public TestOutputWindowTopComponent() {
+    public OutputWindowTopComponent() {
         initComponents();
         setName(Bundle.CTL_TestOutputWindowTopComponent());
         setToolTipText(Bundle.HINT_TestOutputWindowTopComponent());
@@ -64,15 +64,15 @@ public final class TestOutputWindowTopComponent extends TopComponent {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
-        topComponent3.setHtmlDisplayName(org.openide.util.NbBundle.getMessage(TestOutputWindowTopComponent.class, "TestOutputWindowTopComponent.topComponent3.htmlDisplayName")); // NOI18N
+        topComponent3.setHtmlDisplayName(org.openide.util.NbBundle.getMessage(OutputWindowTopComponent.class, "OutputWindowTopComponent.topComponent3.htmlDisplayName")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(TestOutputWindowTopComponent.class, "TestOutputWindowTopComponent.jLabel2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(OutputWindowTopComponent.class, "OutputWindowTopComponent.jLabel2.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(TestOutputWindowTopComponent.class, "TestOutputWindowTopComponent.jLabel4.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(OutputWindowTopComponent.class, "OutputWindowTopComponent.jLabel4.text")); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("微软雅黑", 0, 26)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(100, 102, 221));
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(TestOutputWindowTopComponent.class, "TestOutputWindowTopComponent.jLabel3.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(OutputWindowTopComponent.class, "OutputWindowTopComponent.jLabel3.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -88,7 +88,7 @@ public final class TestOutputWindowTopComponent extends TopComponent {
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
-        jTextArea1.setText(org.openide.util.NbBundle.getMessage(TestOutputWindowTopComponent.class, "TestOutputWindowTopComponent.jTextArea1.text")); // NOI18N
+        jTextArea1.setText(org.openide.util.NbBundle.getMessage(OutputWindowTopComponent.class, "OutputWindowTopComponent.jTextArea1.text")); // NOI18N
         jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout topComponent3Layout = new javax.swing.GroupLayout(topComponent3);
@@ -153,27 +153,31 @@ public final class TestOutputWindowTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton excuteBtn1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JProgressBar jProgressBar2;
-    private javax.swing.JProgressBar jProgressBar3;
-    private javax.swing.JProgressBar jProgressBar4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private org.openide.windows.TopComponent topComponent2;
     private org.openide.windows.TopComponent topComponent3;
     // End of variables declaration//GEN-END:variables
    
-    private SerialPortTest1 instance = SerialPortTest1.getInstance();
-    private static int count = 0;
+//    private SerialPortUtils instance = SerialPortUtils.getInstance();
+//    private static int count = 0;
+    
+    public javax.swing.JProgressBar getProgressBar1() {
+        return jProgressBar1;
+    }
+    
+    public javax.swing.JProgressBar getProgressBar2() {
+        return jProgressBar2;
+    }
+    
+    public javax.swing.JTextArea getJTextArea1() {
+        return jTextArea1;
+    }
     
     @Override
     public void componentOpened() {
@@ -197,9 +201,9 @@ public final class TestOutputWindowTopComponent extends TopComponent {
         // TODO read your settings according to their version
     }
     
-    public static TestOutputWindowTopComponent getInstance() {
+    public static OutputWindowTopComponent getInstance() {
         if (testOutputWindowTopComponent == null) {
-            testOutputWindowTopComponent = new TestOutputWindowTopComponent();
+            testOutputWindowTopComponent = new OutputWindowTopComponent();
         }
         return testOutputWindowTopComponent;
     }

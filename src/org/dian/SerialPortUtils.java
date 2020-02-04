@@ -16,7 +16,7 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import java.util.HashSet;
 
-public class SerialPortTest1 implements Runnable, SerialPortEventListener {
+public class SerialPortUtils implements Runnable, SerialPortEventListener {
 
     // 检测系统中可用的通讯端口类
     private CommPortIdentifier portId;
@@ -42,7 +42,7 @@ public class SerialPortTest1 implements Runnable, SerialPortEventListener {
     }
 
     // 单例创建
-    private static SerialPortTest1 uniqueInstance = new SerialPortTest1();
+    private static SerialPortUtils uniqueInstance = new SerialPortUtils();
 
     //波特率
     private static final int SEND_RETE = 4800;
@@ -63,11 +63,13 @@ public class SerialPortTest1 implements Runnable, SerialPortEventListener {
                 // 比较串口名称是否是"COM3"
                 if (portName.equals(portId.getName())) {
                     System.out.println("找到串口" + portName);
+                    outputText.append("找到串口" + portName + "\n");
                     // 打开串口
                     try {
                         // open:（应用程序名【随意命名】，阻塞时等待的毫秒数）
                         serialPort = (SerialPort) portId.open(this.getClass().getSimpleName(), 2000);
                         System.out.println("获取到串口对象" + portName);
+                        outputText.append("获取到串口对象" + portName + "\n");
                         //实例化输入流
                         inputStream = serialPort.getInputStream();
                         // 设置串口监听
@@ -126,7 +128,7 @@ public class SerialPortTest1 implements Runnable, SerialPortEventListener {
                 {
                     recvMsg += recv;
                 }
-                textArea.setText(recvMsg);
+//                outputText.append("收到串口返回消息: " + recvMsg + "\n");
                 break;
             }
             //closeSerialPort();
@@ -222,16 +224,17 @@ public class SerialPortTest1 implements Runnable, SerialPortEventListener {
         //TODO
     }
 
-    public static SerialPortTest1 getInstance() {
+    public static SerialPortUtils getInstance() {
         return uniqueInstance;
     }
 
     //top component
-    private javax.swing.JTextArea textArea;
+    private javax.swing.JTextArea outputText;
     private javax.swing.JProgressBar progressBar;
 
-    public void setTextArea(javax.swing.JTextArea textArea) {
-        this.textArea = textArea;
+    public void setOutputText(javax.swing.JTextArea outputText) {
+        this.outputText = outputText;
+        SerialTool.outputText = outputText;
     }
 
     public void setProgressBar(javax.swing.JProgressBar progressBar) {
@@ -244,29 +247,31 @@ class WaitAndDownload implements Runnable {
 
     javax.swing.JProgressBar waitBar;
     javax.swing.JProgressBar sendBar;
-    SerialPortTest1 instance;
-    javax.swing.JButton sendButton;
+    SerialPortUtils instance;
+//    javax.swing.JButton sendButton;
+    javax.swing.JTextArea outputText;
 
     public WaitAndDownload(javax.swing.JProgressBar waitBar,
             javax.swing.JProgressBar sendBar,
-            SerialPortTest1 instance,
-            javax.swing.JButton sendButton) {
+            SerialPortUtils instance,
+            javax.swing.JTextArea outputText) {
         this.waitBar = waitBar;
         this.instance = instance;
         this.sendBar = sendBar;
-        this.sendButton = sendButton;
+//        this.sendButton = sendButton;
+        this.outputText = outputText;
     }
 
     @Override
     public void run() {
-        if (waitBar != null) {
-            waitBar.setMaximum(10);
-            waitBar.setValue(0);
-        }
-        System.out.println("run: +");
+        outputText.append("请触发MCU的reset按键.\n");
+        waitBar.setMaximum(10);
+        waitBar.setValue(0);
         try {
             if (instance.sendEnterAndWaiting()) {
                 System.out.println("start to send");
+                outputText.append("检测到对应的MCU芯片.\n");
+                outputText.append("准备发送二进制代码文件中.\n");
                 // get the hex file
                 MplabProjectUtils utils = new MplabProjectUtils();
                 String sendContent = utils.getHexFileContent();
@@ -280,13 +285,18 @@ class WaitAndDownload implements Runnable {
                     instance.sendMsg(line);
                     sendBar.setValue(sendBar.getValue() + 1);
                 }
+                outputText.append("代码发送完毕.\n");
                 //excute
                 instance.sendMsg("g\r");
+                outputText.append("代码开始执行.\n");
+            } else {
+                outputText.append("未检测到对应的MCU芯片.\n");
             }
         } catch (Exception e) {
+            outputText.append("出现异常错误.\n");
             e.printStackTrace();
         } finally {
-            sendButton.setEnabled(true);
+//            sendButton.setEnabled(true);
         }
     }
 }

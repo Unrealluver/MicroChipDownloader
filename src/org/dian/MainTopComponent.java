@@ -30,7 +30,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "properties", openAtStartup = false)
 @ActionID(category = "Window", id = "org.dian.MainTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+//@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_MainAction",
         preferredID = "MainTopComponent"
@@ -160,9 +160,10 @@ public final class MainTopComponent extends TopComponent {
 
         // send enter and waiting for reset
         instance.setProgressBar(jProgressBar2);
-        //wait for reset and then download the program to the board
-        WaitAndDownload waitProcess = new WaitAndDownload(jProgressBar2, jProgressBar1, instance, excuteBtn);
-        new Thread(waitProcess).start();
+        // wait for reset and then download the program to the board
+        // Warning: dont need this now
+//        WaitAndDownload waitProcess = new WaitAndDownload(jProgressBar2, jProgressBar1, instance, excuteBtn);
+//        new Thread(waitProcess).start();
         excuteBtn.setEnabled(false);
 
     }//GEN-LAST:event_excuteBtnActionPerformed
@@ -178,7 +179,7 @@ public final class MainTopComponent extends TopComponent {
     private javax.swing.JProgressBar jProgressBar2;
     // End of variables declaration//GEN-END:variables
 
-    private SerialPortTest1 instance = SerialPortTest1.getInstance();
+    private SerialPortUtils instance = SerialPortUtils.getInstance();
     private static int count = 0;
 
     public javax.swing.JProgressBar getProgressBar1() {

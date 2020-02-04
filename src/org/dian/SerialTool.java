@@ -30,7 +30,9 @@ import java.util.HashSet;
  *
  */
 public class SerialTool {
-/**
+    public static javax.swing.JTextArea outputText;
+    
+    /**
      * @Description:列出所有可用串口
      * @author:Jestiny
      * @date:2018年11月27日, PM 02:50:48
@@ -39,6 +41,8 @@ public class SerialTool {
         HashSet<CommPortIdentifier> portSet = getAvailableSerialPorts();
         for (CommPortIdentifier comm : portSet) {
             System.out.println(comm.getName() + " - " + getPortTypeName(comm.getPortType()));
+            outputText.append("检测到串口: " + comm.getName() + " - " 
+                    + getPortTypeName(comm.getPortType()) + "\n");
         }
     }
  
@@ -61,6 +65,8 @@ public class SerialTool {
         while (portEnum.hasMoreElements()) {
             CommPortIdentifier portIdentifier = portEnum.nextElement();
             System.out.println(portIdentifier.getName() + " - " + getPortTypeName(portIdentifier.getPortType()));
+            outputText.append("检测到端口对象: " + portIdentifier.getName() + " - " 
+                    + getPortTypeName(portIdentifier.getPortType()) + "\n");
         }
     }
  
@@ -114,8 +120,10 @@ public class SerialTool {
                 } catch (PortInUseException e) {
                     // 不可用串口
                     System.out.println("Port, " + com.getName() + ", is in use.");
+                    outputText.append("端口对象: " + com.getName() + ", 正在使用.\n");
                 } catch (Exception e) {
                     System.err.println("Failed to open port " + com.getName());
+                    outputText.append("打开端口: " + com.getName()+ " 遭遇失败.\n");
                     e.printStackTrace();
                 }
             }

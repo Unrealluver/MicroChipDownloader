@@ -33,19 +33,25 @@ public final class OpenWindowAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TestOutputWindowTopComponent instance = TestOutputWindowTopComponent.getInstance();
+        OutputWindowTopComponent instance = OutputWindowTopComponent.getInstance();
 //        instance.availableModes();
         
         Mode outputMode = WindowManager.getDefault().findMode("output");
         outputMode.dockInto(instance);
-//       instance.setEnabled(true);
         instance.open();
         instance.requestActive();
 
-    // send enter and waiting for reset
-    //        SerialPortTest1 instance = SerialPortTest1.getInstance();
-        //wait for reset and then download the program to the board
-//        WaitAndDownload waitProcess = new WaitAndDownload(instance., instance.getProgressBar1(), instance, instance.getExcuteBtn());
-//        new Thread(waitProcess).start();
+        // send enter and waiting for reset
+        SerialPortUtils instanceSerial = SerialPortUtils.getInstance();
+        instanceSerial.setProgressBar(instance.getProgressBar2());
+        instanceSerial.setOutputText(instance.getJTextArea1());
+        instance.getProgressBar2().setValue(0);
+        instance.getProgressBar1().setValue(0);
+        // wait for reset and then download the program to the board
+        javax.swing.JTextArea j = instance.getJTextArea1();
+        j.setText("");
+        j.append("下载程序已启动.\n");
+        WaitAndDownload waitProcess = new WaitAndDownload(instance.getProgressBar2(), instance.getProgressBar1(), instanceSerial, instance.getJTextArea1());
+        new Thread(waitProcess).start();
     }
 }
