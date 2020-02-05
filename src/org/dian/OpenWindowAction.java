@@ -5,15 +5,33 @@
  */
 package org.dian;
 
+import com.sun.glass.ui.Window.Level;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.logging.Logger;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
+
+
 
 @ActionID(
         category = "Downloading",
@@ -34,8 +52,28 @@ public final class OpenWindowAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         OutputWindowTopComponent instance = OutputWindowTopComponent.getInstance();
-//        instance.availableModes();
+        javax.swing.JTextArea j = instance.getJTextArea1();    
+        j.setText("");
         
+        try {
+            loadLib("test.bat", j);
+            loadLib("rxtxParallel.dll", j);
+            loadLib("rxtxSerial.dll", j);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        String nativeTempDir = System.getProperty("java.io.tmpdir");   
+        String batPath = nativeTempDir + "\\test.bat";
+        
+        File batFile = new File(batPath);
+//        j.append(nativeTempDir + "\\test.bat \n");
+        Boolean batFileExist = batFile.exists();
+        j.append("找到环境监测脚本. " + "\n");
+        System.out.println("batFileExist:" + batFileExist);
+        if (batFileExist) 
+            callCmd(batPath, j);
+    
         Mode outputMode = WindowManager.getDefault().findMode("output");
         outputMode.dockInto(instance);
         instance.open();
@@ -48,10 +86,86 @@ public final class OpenWindowAction implements ActionListener {
         instance.getProgressBar2().setValue(0);
         instance.getProgressBar1().setValue(0);
         // wait for reset and then download the program to the board
-        javax.swing.JTextArea j = instance.getJTextArea1();
-        j.setText("");
+        
+//        j.setText("");
         j.append("下载程序已启动.\n");
         WaitAndDownload waitProcess = new WaitAndDownload(instance.getProgressBar2(), instance.getProgressBar1(), instanceSerial, instance.getJTextArea1());
         new Thread(waitProcess).start();
     }
+    
+    private static void  callCmd(String locationCmd, javax.swing.JTextArea j){
+        StringBuilder sb = new StringBuilder();
+        try {
+            Process child = Runtime.getRuntime().exec(locationCmd);
+            j.append("检测脚本运行完毕." + "\n");
+        } catch (IOException e) {
+            j.append("找不到监测脚本!" + "\n");
+            System.out.println(e);
+        }
+     }
+    
+    public static void list(File file, javax.swing.JTextArea j) {
+		// 获取了当前目录下的所有文件和文件夹
+	File[] listFiles = file.listFiles();
+	if (listFiles == null) {
+            return;
+	}
+	for (File file2 : listFiles) {
+            if (file2.isFile()) {
+		System.out.println(file2.getName());
+                j.append(file2.getName() + "\n");
+            }
+	    // 如果是文件夹list
+	    if (file2.isDirectory()) {
+		System.out.println(file2.getName());
+                j.append(file2.getName() + "\n");
+		list(file2, j);
+	    }
+	}
+    }
+    
+    //BIN_LIB为JAR包中存放DLL的路径   
+    //getResourceAsStream以JAR中根路径为开始点   
+    private void loadLib(String libName, javax.swing.JTextArea j) throws IOException {   
+        String systemType = System.getProperty("os.name");   
+        String libExtension = (systemType.toLowerCase().indexOf("win")!=-1) ? ".dll" : ".so";   
+
+//        String libFullName = libName + libExtension;   
+        String libFullName = libName;
+
+        String nativeTempDir = System.getProperty("java.io.tmpdir");   
+
+        InputStream in = null;   
+        BufferedInputStream reader = null;   
+        FileOutputStream writer = null;   
+        
+        String BIN_LIB = "resources/";
+        File extractedLibFile = new File(nativeTempDir+File.separator+libFullName);   
+        if(!extractedLibFile.exists()){   
+            try {   
+                in = getClass().getClassLoader().getResourceAsStream(BIN_LIB + libFullName);   
+//                j.append("inputstream: " + BIN_LIB + libFullName + "\n");
+//                if(in==null)   
+//                    in =  SMAgent.class.getResourceAsStream(libFullName);   
+//                SMAgent.class.getResource(libFullName);   
+                reader = new BufferedInputStream(in);   
+                writer = new FileOutputStream(extractedLibFile);   
+
+                byte[] buffer = new byte[1024];   
+
+                while (reader.read(buffer) > 0){   
+                    writer.write(buffer);   
+                    buffer = new byte[1024];   
+                }   
+            } catch (IOException e){   
+                e.printStackTrace();   
+            } finally {   
+                if(in!=null)   
+                    in.close();   
+                if(writer!=null)   
+                    writer.close();   
+            }   
+        }   
+//        System.load(extractedLibFile.toString());   
+    }  
 }
