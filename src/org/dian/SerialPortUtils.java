@@ -15,6 +15,7 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import java.util.HashSet;
+import org.openide.util.Exceptions;
 
 public class SerialPortUtils implements Runnable, SerialPortEventListener {
 
@@ -140,8 +141,10 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
 
     public void closeSerialPort() {
         try {
-            uniqueInstance.serialPort.close();
-            
+            inputStream = null;
+            serialPort.notifyOnDataAvailable(false);
+            serialPort.removeEventListener();
+            serialPort.close();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -168,18 +171,20 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
     //向串口发送回车并等待按下reset按钮
     public boolean sendEnterAndWaiting() throws Exception {
         recvMsg = "";
-
+        
         if (serialPort == null) {
             HashSet<CommPortIdentifier> portSet = SerialTool.getAvailableSerialPorts();
             for (CommPortIdentifier comm : portSet) {
                 String portInfo = comm.getName();
                 boolean opened = init(portInfo);
+                System.out.println("串口为空时: " + recvMsg);
                 if (opened && waitForReset()) {
                     return true;
                 }
                 closeSerialPort();
             }
         } else {
+            System.out.println("串口不为空时: " + recvMsg);
             return waitForReset();
         }
         
@@ -187,6 +192,7 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
     }
 
     private boolean waitForReset() throws Exception {
+        System.out.println("wait for reset start: " + recvMsg);
         if (progressBar != null)
             progressBar.setValue(0);
         //实例化输出流
@@ -204,18 +210,23 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
                 break;
             }
             if (t2 - temp - 1000 > 0) {
+                System.out.println("wait for reset 倒计时: " + recvMsg);
                 if (progressBar != null)
                     progressBar.setValue(progressBar.getValue() + 1);
-                temp = t2;
+                temp = t2;  
             }
             String information = "\r";
             outputStream.write(information.getBytes());
+            System.out.println("before contains: " + recvMsg);
             if (recvMsg.contains(BEGIN_SIGNAL)) {
+                System.out.println("reset bug fix: " + recvMsg);
                 if (progressBar != null)
                     progressBar.setValue(progressBar.getMaximum());
+                System.out.println("返回true: " + recvMsg);
                 return true;
             }
         }
+        System.out.println("返回false: " + recvMsg);
         return false;
     }
 
@@ -283,11 +294,13 @@ class WaitAndDownload implements Runnable {
                 for (String line : codes) {
                     line += "\r";
                     instance.sendMsg(line);
+                    System.out.println("print code lines: " + line);
                     sendBar.setValue(sendBar.getValue() + 1);
                 }
                 outputText.append("代码发送完毕.\n");
                 //excute
                 instance.sendMsg("g\r");
+                System.out.println("发送启动信号\n");
                 outputText.append("代码开始执行.\n");
             } else {
                 outputText.append("未检测到对应的MCU芯片.\n");
@@ -296,7 +309,16 @@ class WaitAndDownload implements Runnable {
             outputText.append("出现异常错误.\n");
             e.printStackTrace();
         } finally {
-//            sendButton.setEnabled(true);
+            try {
+                //            sendButton.setEnabled(true);
+                outputText.append("端口释放中...\n");
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            instance.closeSerialPort();
+            outputText.append("端口占用解除.\n");
+            OpenWindowAction.ifPerform = true;
         }
     }
 }

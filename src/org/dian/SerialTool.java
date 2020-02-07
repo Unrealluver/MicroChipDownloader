@@ -100,7 +100,14 @@ public class SerialTool {
     @SuppressWarnings("unchecked")
     public static HashSet<CommPortIdentifier> getAvailableSerialPorts() {
         HashSet<CommPortIdentifier> h = new HashSet<>();
-        Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
+        Enumeration<CommPortIdentifier> portList = null;
+        try {
+            portList = CommPortIdentifier.getPortIdentifiers();
+        } catch(Throwable t) {
+            outputText.setText("为载入下载器运行环境, 请重启IDE.\n");
+            System.exit(1);
+        }
+
         while (portList.hasMoreElements()) {
             CommPortIdentifier com = (CommPortIdentifier) portList.nextElement();
             switch (com.getPortType()) {

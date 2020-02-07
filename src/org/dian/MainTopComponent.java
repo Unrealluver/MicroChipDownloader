@@ -36,9 +36,9 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "MainTopComponent"
 )
 @Messages({
-    "CTL_MainAction=愤怒的小程序",
+    "CTL_MainAction=MicroChipDownloader",
     "CTL_MainTopComponent=Serial Tool",
-    "HINT_MainTopComponent=This is a serial port debug assistant created by Jestiny"
+    "HINT_MainTopComponent=This is a serial port debug assistant powered by DianGroup 705"
 })
 public final class MainTopComponent extends TopComponent {
 

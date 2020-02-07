@@ -15,29 +15,29 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays something.
  */
 @ConvertAsProperties(
-        dtd = "-//org.dian//TestOutputWindow//EN",
+        dtd = "-//org.dian//OutputWindow//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "TestOutputWindowTopComponent",
+        preferredID = "OutputWindowTopComponent",
 //        iconBase = "org/dian/smiley.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "output", openAtStartup = false)
-@ActionID(category = "Window", id = "org.dian.TestOutputWindowTopComponent")
+@ActionID(category = "Window", id = "org.dian.OutputWindowTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_TestOutputWindowAction",
-        preferredID = "TestOutputWindowTopComponent"
+        displayName = "#CTL_OutputWindowAction",
+        preferredID = "OutputWindowTopComponent"
 )
 @Messages({
-    "CTL_TestOutputWindowAction=TestOutputWindow",
+    "CTL_TestOutputWindowAction=OutputWindow",
     "CTL_TestOutputWindowTopComponent=程序烧录",
-    "HINT_TestOutputWindowTopComponent=This is a TestOutputWindow window"
+    "HINT_TestOutputWindowTopComponent=This is the OutputWindow window"
 })
 public final class OutputWindowTopComponent extends TopComponent {
     
-    private static OutputWindowTopComponent testOutputWindowTopComponent;
+    private static OutputWindowTopComponent OutputWindowTopComponent;
 
     public OutputWindowTopComponent() {
         initComponents();
@@ -202,9 +202,9 @@ public final class OutputWindowTopComponent extends TopComponent {
     }
     
     public static OutputWindowTopComponent getInstance() {
-        if (testOutputWindowTopComponent == null) {
-            testOutputWindowTopComponent = new OutputWindowTopComponent();
+        if (OutputWindowTopComponent == null) {
+            OutputWindowTopComponent = new OutputWindowTopComponent();
         }
-        return testOutputWindowTopComponent;
+        return OutputWindowTopComponent;
     }
 }

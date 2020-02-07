@@ -46,51 +46,16 @@ import org.openide.windows.WindowManager;
     ,
   @ActionReference(path = "Toolbars/How Do I?", position = 300)
 })
-@Messages("CTL_OpenWindowAction=The Angry Code")
+@Messages("CTL_OpenWindowAction=MicroChipDownloader")
 public final class OpenWindowAction implements ActionListener {
+    public static boolean ifPerform = true;
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        OutputWindowTopComponent instance = OutputWindowTopComponent.getInstance();
-        javax.swing.JTextArea j = instance.getJTextArea1();    
-        j.setText("");
-        
-        try {
-            loadLib("test.bat", j);
-            loadLib("rxtxParallel.dll", j);
-            loadLib("rxtxSerial.dll", j);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+        if(ifPerform) {
+            ifPerform = false;
+            doActionPerform(ifPerform);
         }
-
-        String nativeTempDir = System.getProperty("java.io.tmpdir");   
-        String batPath = nativeTempDir + "\\test.bat";
-        
-        File batFile = new File(batPath);
-//        j.append(nativeTempDir + "\\test.bat \n");
-        Boolean batFileExist = batFile.exists();
-        j.append("找到环境监测脚本. " + "\n");
-        System.out.println("batFileExist:" + batFileExist);
-        if (batFileExist) 
-            callCmd(batPath, j);
-    
-        Mode outputMode = WindowManager.getDefault().findMode("output");
-        outputMode.dockInto(instance);
-        instance.open();
-        instance.requestActive();
-
-        // send enter and waiting for reset
-        SerialPortUtils instanceSerial = SerialPortUtils.getInstance();
-        instanceSerial.setProgressBar(instance.getProgressBar2());
-        instanceSerial.setOutputText(instance.getJTextArea1());
-        instance.getProgressBar2().setValue(0);
-        instance.getProgressBar1().setValue(0);
-        // wait for reset and then download the program to the board
-        
-//        j.setText("");
-        j.append("下载程序已启动.\n");
-        WaitAndDownload waitProcess = new WaitAndDownload(instance.getProgressBar2(), instance.getProgressBar1(), instanceSerial, instance.getJTextArea1());
-        new Thread(waitProcess).start();
     }
     
     private static void  callCmd(String locationCmd, javax.swing.JTextArea j){
@@ -168,4 +133,71 @@ public final class OpenWindowAction implements ActionListener {
         }   
 //        System.load(extractedLibFile.toString());   
     }  
+
+    private boolean ifInvorimentSatisfied() {
+        File invoFile1 = new File("C:\\\\Windows\\\\System32\\\\rxtxParallel.dll");
+        File invoFile2 = new File("C:\\\\Windows\\\\System32\\\\rxtxSerial.dll");
+//        j.append(nativeTempDir + "\\test.bat \n");
+        if(invoFile1.exists()&&invoFile2.exists())
+            return true;
+        else
+            return false;
+    }
+
+    private void installInvorimentComponent(javax.swing.JTextArea j) throws IOException {
+        loadLib("test.bat", j);
+        loadLib("rxtxParallel.dll", j);
+        loadLib("rxtxSerial.dll", j);
+
+        String nativeTempDir = System.getProperty("java.io.tmpdir");   
+        String batPath = nativeTempDir + "\\test.bat";
+        
+        File batFile = new File(batPath);
+//        j.append(nativeTempDir + "\\test.bat \n");
+        Boolean batFileExist = batFile.exists();
+        j.append("找到环境监测脚本. " + "\n");
+        System.out.println("batFileExist:" + batFileExist);
+        if (batFileExist) 
+            callCmd(batPath, j);
+    }
+
+    private void doActionPerform(boolean ifPerform) {
+        OutputWindowTopComponent instance = OutputWindowTopComponent.getInstance();
+        javax.swing.JTextArea j = instance.getJTextArea1();    
+        j.setText("");
+        
+        if(ifInvorimentSatisfied())
+            j.append("下载器运行环境监测合格!\n");
+        else {
+            j.append("正在安装下载器运行环境!\n");
+            try {
+                installInvorimentComponent(j);
+                ifPerform = true;
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+                j.append("环境安装失败!");
+                ifPerform = true;
+            }
+        }
+   
+        Mode outputMode = WindowManager.getDefault().findMode("output");
+        outputMode.dockInto(instance);
+        instance.open();
+        instance.requestActive();
+
+        // send enter and waiting for reset
+        SerialPortUtils instanceSerial = SerialPortUtils.getInstance();
+        instanceSerial.setProgressBar(instance.getProgressBar2());
+        instanceSerial.setOutputText(instance.getJTextArea1());
+        instance.getProgressBar2().setValue(0);
+        instance.getProgressBar1().setValue(0);
+        // wait for reset and then download the program to the board
+        
+//        j.setText("");
+        j.append("下载程序已启动.\n");
+        WaitAndDownload waitProcess = new WaitAndDownload(instance.getProgressBar2(), instance.getProgressBar1(), instanceSerial, instance.getJTextArea1());
+        new Thread(waitProcess).start();
+    }
+    
+    
 }
