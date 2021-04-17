@@ -104,7 +104,7 @@ public class SerialTool {
         try {
             portList = CommPortIdentifier.getPortIdentifiers();
         } catch(Throwable t) {
-            outputText.setText("为载入下载器运行环境, 请重启IDE.\n");
+            outputText.setText("获取串口列表失败！.\n");
             System.exit(1);
         }
 
@@ -122,12 +122,16 @@ public class SerialTool {
                      * open方法打开的，那么任何的getInputStream都将返回相同的数据流对象，除非 有close被调用。
                      */
                     CommPort thePort = com.open(Object.class.getSimpleName(), 50);
+                    outputText.append("正在检测端口对象：" + com.getName() + "...\n");
                     thePort.close();
+                    outputText.append("检测结束，端口对象：" + com.getName() + "响应正常.\n");
                     h.add(com);
+                    outputText.append("端口对象：" + com.getName() + "已加入队列.\n");
                 } catch (PortInUseException e) {
                     // 不可用串口
                     System.out.println("Port, " + com.getName() + ", is in use.");
                     outputText.append("端口对象: " + com.getName() + ", 正在使用.\n");
+                    outputText.append("请关闭其余正在使用本串口的应用\n");
                 } catch (Exception e) {
                     System.err.println("Failed to open port " + com.getName());
                     outputText.append("打开端口: " + com.getName()+ " 遭遇失败.\n");

@@ -12,7 +12,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.4</specification-version>
+                        <specification-version>1.5.3.141202</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -91,7 +91,10 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>gnu.io</package>
+                <package>org.dian</package>
+            </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/RXTXcomm.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/RXTXcomm.jar</binary-origin>

@@ -27,7 +27,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Window", id = "org.dian.OutputWindowTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_OutputWindowAction",
+        displayName = "#CTL_TestOutputWindowAction",
         preferredID = "OutputWindowTopComponent"
 )
 @Messages({

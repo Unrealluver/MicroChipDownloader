@@ -6,6 +6,7 @@
 package org.dian;
 
 import com.sun.glass.ui.Window.Level;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
@@ -46,7 +47,7 @@ import org.openide.windows.WindowManager;
     ,
   @ActionReference(path = "Toolbars/How Do I?", position = 300)
 })
-@Messages("CTL_OpenWindowAction=MicroChipDownloader")
+@Messages("CTL_OpenWindowAction=Bootloader communicator")
 public final class OpenWindowAction implements ActionListener {
     public static boolean ifPerform = true;
 

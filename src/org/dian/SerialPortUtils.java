@@ -97,6 +97,7 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
     // 实现接口SerialPortEventListener中的方法 读取从串口中接收的数据
     @Override
     public void serialEvent(SerialPortEvent event) {
+        System.out.println("收到串口信息");
         switch (event.getEventType()) {
             case SerialPortEvent.BI: // 通讯中断
             case SerialPortEvent.OE: // 溢位错误
@@ -118,6 +119,7 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
 
     // 读取串口返回信息
     public void readComm() {
+        System.out.println("开始读取串口信息.");
         byte[] readBuffer = new byte[1024];
         try {
             inputStream = serialPort.getInputStream();
@@ -134,6 +136,7 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
             }
             //closeSerialPort();
         } catch (IOException e) {
+            System.out.println("读取串口信息出错.");
             serialPort = null;
             e.printStackTrace();
         }
@@ -174,7 +177,9 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
         
         if (serialPort == null) {
             HashSet<CommPortIdentifier> portSet = SerialTool.getAvailableSerialPorts();
+            System.out.println("PortSet Size: " + portSet.size());
             for (CommPortIdentifier comm : portSet) {
+                System.out.println("CommPortIdentifire: " + comm.getName());
                 String portInfo = comm.getName();
                 boolean opened = init(portInfo);
                 System.out.println("串口为空时: " + recvMsg);
@@ -209,14 +214,15 @@ public class SerialPortUtils implements Runnable, SerialPortEventListener {
                     progressBar.setValue(progressBar.getMaximum());
                 break;
             }
-            if (t2 - temp - 1000 > 0) {
+            if (t2 - temp - 500 > 0) {
                 System.out.println("wait for reset 倒计时: " + recvMsg);
                 if (progressBar != null)
                     progressBar.setValue(progressBar.getValue() + 1);
                 temp = t2;  
+                String information = "\r";
+                outputStream.write(information.getBytes());
             }
-            String information = "\r";
-            outputStream.write(information.getBytes());
+            
             System.out.println("before contains: " + recvMsg);
             if (recvMsg.contains(BEGIN_SIGNAL)) {
                 System.out.println("reset bug fix: " + recvMsg);
@@ -282,15 +288,17 @@ class WaitAndDownload implements Runnable {
             if (instance.sendEnterAndWaiting()) {
                 System.out.println("start to send");
                 outputText.append("检测到对应的MCU芯片.\n");
-                outputText.append("准备发送二进制代码文件中.\n");
+                
                 // get the hex file
                 MplabProjectUtils utils = new MplabProjectUtils();
+                outputText.append("获取hex代码文件中...\n");
                 String sendContent = utils.getHexFileContent();
+                outputText.append("hex代码文件准备完毕.\n");
                 //download to the board by line
                 String[] codes = sendContent.split("\n");
                 sendBar.setMaximum(codes.length);
                 sendBar.setValue(0);
-
+                outputText.append("准备发送二进制代码文件中.\n");
                 for (String line : codes) {
                     line += "\r";
                     instance.sendMsg(line);

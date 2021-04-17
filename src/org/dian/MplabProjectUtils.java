@@ -29,7 +29,11 @@ public class MplabProjectUtils {
     }
     
     public String getHexFileContent(){
-        Project project = HotProject.getProject();
+        Project project = null;
+//        if (null == HotProject.getProject())
+//            System.out.println("cannot get the hot project");
+//        else
+        project = HotProject.getProject();
         FileObject fileObject = project.getProjectDirectory();
         String defaultConf = project.getLookup().lookup(ProjectConfigurationProvider.class).getActiveConfiguration().getDisplayName();
         String hexFileFolderPath = fileObject.getPath() + "/dist/" + defaultConf + "/production";

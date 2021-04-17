@@ -36,7 +36,7 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "MainTopComponent"
 )
 @Messages({
-    "CTL_MainAction=MicroChipDownloader",
+    "CTL_MainAction=Bootloader communicator",
     "CTL_MainTopComponent=Serial Tool",
     "HINT_MainTopComponent=This is a serial port debug assistant powered by DianGroup 705"
 })
